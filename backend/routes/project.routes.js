@@ -8,11 +8,11 @@ const {
   createClient,
   updateClient,
   deleteClient,
-  getAllImages,
-  getOneImage,
-  addImage,
-  updateImage,
-  deleteImage,
+  // getAllImages,
+  // getOneImage,
+  // addImage,
+  // updateImage,
+  // deleteImage,
 } = require("../controller/project.controller");
 const router = require("express").Router();
 
@@ -28,10 +28,10 @@ router.post("/:projectId/client", createClient);
 router.put("/:projectId/client/:clientId", updateClient);
 router.delete("/:projectId/client/:clientId", deleteClient);
 
-router.get("/:projectId/images/", getAllImages);
-router.get("/:projectId/images/:imageId", getOneImage);
-router.post("/:projectId/images", addImage);
-router.put("/:projectId/images/:imageId", updateImage);
-router.delete("/:projectId/images/:imageId", deleteImage);
+// router.get("/:projectId/images/", getAllImages);
+// router.get("/:projectId/images/:imageId", getOneImage);
+// router.post("/:projectId/images", addImage);
+// router.put("/:projectId/images/:imageId", updateImage);
+// router.delete("/:projectId/images/:imageId", deleteImage);
 
 module.exports = router;

@@ -1,81 +1,178 @@
-const client = require("../config/db");
+const db = require("../config/db");
+const createError = require("http-errors");
 
-exports.getAllAlbums = async (req, res, next) => {
+exports.getAllProjects = async (req, res, next) => {
   try {
-    const allAlbums = await client.album.findMany({
-      include: { tracks: true },
-    });
-    res.status(200).json(allAlbums);
+    const allProjects = await db.project.findMany({});
+    res.status(200).json(allProjects);
   } catch (err) {
     next(err);
   }
 };
 
-//as a user, I want to be able to see an album by entering its id in the url.
-exports.getOneAlbum = async (req, res, next) => {
+exports.getOneProject = async (req, res, next) => {
   try {
-    const albumId = Number(req.params.albumId);
-    const uniqueAlbum = await client.album.findUnique({
-      where: { id: albumId },
+    const projectId = Number(req.params.projectId);
+    const uniqueProject = await db.project.findUnique({
+      where: { id: projectId },
       include: {
-        tracks: true,
+        client: true,
       },
     });
-    res.status(200).json(uniqueAlbum);
+    res.status(200).json(uniqueProject);
   } catch (err) {
     next(err);
   }
 };
 
-//as a user, I want to be able to create a new album.
-exports.createAlbum = async (req, res, next) => {
+exports.createProject = async (req, res, next) => {
   try {
-    const { title, genre, picture, artist, tracks } = req.body;
-    const newAlbum = await client.album.create({
+    const { name, description, poster, repository, link } = req.body;
+    const newProject = await db.project.create({
       data: {
-        title: title,
-        genre: genre,
-        picture: picture,
-        artist: artist,
-        tracks: { connect: tracks },
+        name: name,
+        description: description,
+        poster: poster,
+        repository: repository,
+        link: link,
+        // client: { connect: client },
       },
-      include: { tracks: true },
+      // include: { client: true },
     });
-    res.status(200).json(newAlbum);
+    res.status(200).json(newProject);
   } catch (err) {
     next(err);
   }
 };
 
-// as a user, I want to be able to modify an album.
-exports.updateAlbum = async (req, res, next) => {
+exports.updateProject = async (req, res, next) => {
   try {
-    const albumId = Number(req.params.albumId);
-    const { title, genre, picture, artist, tracks } = req.body;
-    const updatedAlbum = await client.album.update({
-      where: { id: albumId },
+    const projectId = Number(req.params.projectId);
+    const { name, description, poster, repository, link } = req.body;
+    const updatedProject = await db.project.update({
+      where: { id: projectId },
       data: {
-        title,
-        genre,
-        picture,
-        artist,
-        tracks,
+        name: name,
+        description: description,
+        poster: poster,
+        repository: repository,
+        link: link,
+        // client?
       },
     });
-    res.status(200).json(updatedAlbum);
+    res.status(200).json(updatedProject);
   } catch (err) {
     next(err);
   }
 };
 
-// as a user, I want to be able to delete an album.
-exports.deleteAlbum = async (req, res, next) => {
+exports.deleteProject = async (req, res, next) => {
   try {
-    const albumId = Number(req.params.albumId);
-    const deletedAlbum = await client.album.delete({
-      where: { id: albumId },
+    const projectId = Number(req.params.projectId);
+    const deletedProject = await db.project.delete({
+      where: { id: projectId },
     });
-    res.status(200).json(deletedAlbum);
+    res.status(200).json(deletedProject);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//CLIENT!!
+const findProject = async (id) => {
+  const project = await db.project.findUnique({ where: { id } });
+  return project;
+};
+
+const findClient = async (id) => {
+  const client = await db.client.findUnique({ where: { id } });
+  return client;
+};
+
+// GET ("/:projectId/client", getClient);
+
+exports.getClient = async (req, res, next) => {
+  try {
+    const projectId = Number(req.params.projectId);
+
+    const client = await db.project
+      .findUnique({
+        where: { id: projectId },
+      })
+      .client();
+    res.status(200).json(client);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//POST "/:projectId/client", createClient);
+exports.createClient = async (req, res, next) => {
+  try {
+    const projectId = Number(req.params.projectId);
+    const { name, industry } = req.body;
+    const project = await findProject(projectId);
+    if (!project) {
+      throw createError(404, "Project does not exist");
+    }
+    const newClient = await db.client.create({
+      data: {
+        name: name,
+        industry: industry,
+        project: { connect: { id: projectId } },
+      },
+    });
+    res.status(200).json(newClient);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// PUT ("/:projectId/client/:clientId", updateClient);
+
+exports.updateClient = async (req, res, next) => {
+  try {
+    const projectId = Number(req.params.projectId);
+    const project = await findProject(projectId);
+    if (!project) {
+      throw createError(404, "Project not Found");
+    }
+    const clientId = Number(req.params.clientId);
+    const client = await findClient(clientId);
+    if (!client) {
+      throw createError(404, "Client not Found");
+    }
+    const newName = req.body.name;
+    const newIndustry = req.body.industry;
+    const updatedClient = await db.client.update({
+      where: { id: projectId },
+      data: { name: newName, industry: newIndustry },
+      // include: { client: true },
+    });
+    res.status(200).json(updatedClient);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE ("/:projectId/client/:clientId", deleteClient);
+
+exports.deleteClient = async (req, res, next) => {
+  try {
+    const projectId = Number(req.params.projectId);
+    const clientId = Number(req.params.clientId);
+    const project = await findProject(projectId);
+    const client = await findClient(clientId);
+    if (!project) {
+      throw createError(404, "Project not Found");
+    }
+    if (!client) {
+      throw createError(404, "Client not Found");
+    }
+    const deletedClient = await db.client.delete({
+      where: { id: clientId },
+    });
+    res.status(200).json(deletedClient);
   } catch (err) {
     next(err);
   }
