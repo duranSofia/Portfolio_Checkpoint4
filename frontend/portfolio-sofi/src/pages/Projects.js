@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import useInput from "../hooks/useInput";
+import React from "react";
+import useProject from "../hooks/useProject";
 
 export default function Projects() {
-  const { error, onAdd, projects } = useInput();
-  console.log("PROJECTS PAGE--->" + JSON.stringify(projects));
+  const { projects } = useProject();
+  // console.log("PROJECTS PAGE--->" + JSON.stringify(projects));
   return (
     <div>
-      <h3>My Projects</h3>
+      <h3 className="mt-4 text-center">My Projects</h3>
       <div className="project-showcase">
         {projects?.map((project) => {
           return (
-            <div className="project-item">
+            <div key={project.id} className="project-item">
               <img src={project.poster} alt={project.name} />
               <h3>{project.name}</h3>
               {/* <p>ID: {project.id}</p> */}
