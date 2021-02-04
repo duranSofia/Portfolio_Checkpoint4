@@ -71,27 +71,36 @@ export default function ProjectsAdmin() {
       >
         <Form.Group controlId="formGridAddress1">
           <Form.Label>Project Name</Form.Label>
-          <Form.Control name="name" placeholder="Project Name" />
+          <Form.Control name="name" placeholder="Give your project a name" />
         </Form.Group>
         <Form.Group controlId="exampleForm.ControlTextarea1">
           <Form.Label>Project Description</Form.Label>
-          <Form.Control as="textarea" rows={3} name="description" />
+          <Form.Control
+            as="textarea"
+            rows={3}
+            name="description"
+            placeholder="Describe the project and technologies implemented"
+          />
         </Form.Group>
+        {/* TODO Add file upload route */}
         {/* <Form.Group>
           <Form.Label className="font-weight-bold">Poster Image</Form.Label>
           <Form.File id="exampleFormControlFile1" label="Example file input" />
         </Form.Group> */}
         <Form.Group controlId="formGridAddress2">
           <Form.Label>Repository</Form.Label>
-          <Form.Control name="repository" placeholder="repository" />
+          <Form.Control
+            name="repository"
+            placeholder="GitHub repository link"
+          />
         </Form.Group>
         <Form.Group controlId="formGridAddress3">
           <Form.Label>Public Link</Form.Label>
-          <Form.Control placeholder="link" />
+          <Form.Control name="link" placeholder="Website/App Link" />
         </Form.Group>
         <Form.Group controlId="formGridAddress4">
           <Form.Label>Client </Form.Label>
-          <Form.Control placeholder="Client" />
+          <Form.Control name="client" placeholder="Client" />
         </Form.Group>
         <Button variant="primary" type="submit">
           Submit

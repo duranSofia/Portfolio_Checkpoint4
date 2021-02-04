@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import useAsyncError from "./useAsyncError";
-
-// const API_URL = process.env.REACT_APP_API_URL;
+import axios from "axios";
 
 export default function useProject() {
   const [error, setError] = useState("");
@@ -38,20 +37,14 @@ export default function useProject() {
   const handleAddProject = (event) => {
     event.preventDefault();
     let formData = new FormData(event.target);
-    axios({
-      method: "POST",
-    })
-      .post("api/project", { body: formData })
-      // fetch(`api/project`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/x-www-form-urlencoded",
-      //   },
-      //   body: formData,
-      // })
-      .then((projects) => {
-        console.log("projects--> " + projects);
-        setProjects([...projects, projects]);
+    // console.log("FORM--> " + JSON.stringify(formData));
+    const formDataObj = Object.fromEntries(formData.entries());
+    console.log("sending.. " + formDataObj);
+    axios
+      .post("api/project", formData, {})
+      .then((response) => {
+        const newProject = response.data;
+        setProjects([...projects, newProject]);
       })
       .catch((err) => {
         setError(err.message);
